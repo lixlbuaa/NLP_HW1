@@ -8,6 +8,31 @@ import matplotlib as mpl
 logging.basicConfig(level=logging.INFO)
 mpl.rcParams['font.sans-serif'] = ['SimHei']
 
+def read_all_files(path):
+    data_list = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            filename = os.path.join(root, file)
+            with open(filename, 'r', encoding='ANSI') as f:
+                txt = f.read()
+                d = ChineseData()
+                d.txt = txt
+                d.txtname = file.split('.')[0]
+                data_list.append(d)
+            f.close()
+    return data_list
+
+
+def read_punctuation_list(path):
+    punctuation = [line.strip() for line in open(path, encoding='UTF-8').readlines()]
+    punctuation.extend(['\n', '\u3000', '\u0020', '\u00A0'])
+    return punctuation
+
+
+def read_stopwords_list(path):
+    stopwords = [line.strip() for line in open(path, encoding='UTF-8').readlines()]
+    return stopwords
+
 class ChineseData:
     def __init__(self, txtname='', txt='', sentences=[], words=[], entropyinit={}):
         self.txtname = txtname
@@ -103,32 +128,6 @@ class ChineseData:
         self.calcuNmodelEntropy(3, entropy_dic)
         self.calcuNmodelEntropy(4, entropy_dic)
         self.entropy = entropy_dic
-
-
-def read_all_files(path):
-    data_list = []
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            filename = os.path.join(root, file)
-            with open(filename, 'r', encoding='ANSI') as f:
-                txt = f.read()
-                d = ChineseData()
-                d.txt = txt
-                d.txtname = file.split('.')[0]
-                data_list.append(d)
-            f.close()
-    return data_list
-
-
-def read_punctuation_list(path):
-    punctuation = [line.strip() for line in open(path, encoding='UTF-8').readlines()]
-    punctuation.extend(['\n', '\u3000', '\u0020', '\u00A0'])
-    return punctuation
-
-
-def read_stopwords_list(path):
-    stopwords = [line.strip() for line in open(path, encoding='UTF-8').readlines()]
-    return stopwords
 
 if __name__ == "__main__":
     data_dir_path = '.\\Dataset'
